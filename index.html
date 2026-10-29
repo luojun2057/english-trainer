@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>日常英语碎片练 · Lily 老师</title>
+<style>
+  :root{
+    --bg:#f6f8fa; --card:#ffffff; --text:#2b3440; --muted:#68737f;
+    --accent:#0e7490; --accent-soft:#e6f4f7; --accent-line:#bfe3ec;
+    --border:#e6eaef; --ok:#2e8b57; --ok-soft:#e9f6ee;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;
+    font-size:16px; line-height:1.6;
+  }
+  .wrap{max-width:780px; margin:0 auto; padding:16px 14px 60px;}
+  header{padding:10px 4px 14px;}
+  h1{font-size:22px; font-weight:700;}
+  header p{color:var(--muted); font-size:13px; margin-top:2px;}
+  nav{display:flex; gap:8px; flex-wrap:wrap; margin:12px 0 18px;}
+  nav button{
+    border:1px solid var(--border); background:var(--card); color:var(--text);
+    padding:8px 14px; border-radius:999px; font-size:14px; cursor:pointer;
+  }
+  nav button.on{background:var(--accent); border-color:var(--accent); color:#fff;}
+  section{display:none;}
+  section.on{display:block;}
+  .card{
+    background:var(--card); border:1px solid var(--border); border-radius:14px;
+    padding:16px; margin-bottom:14px;
+  }
+  .card h3{font-size:16px; margin-bottom:8px;}
+  .muted{color:var(--muted); font-size:13px;}
+  .btn{
+    display:inline-block; border:1px solid var(--accent); background:var(--accent);
+    color:#fff; border-radius:10px; padding:7px 14px; font-size:14px; cursor:pointer; margin:4px 6px 4px 0;
+  }
+  .btn.ghost{background:var(--accent-soft); color:var(--accent); border-color:var(--accent-line);}
+  .btn.done{background:var(--ok); border-color:var(--ok);}
+  table{width:100%; border-collapse:collapse; font-size:14px; margin:8px 0;}
+  th,td{border:1px solid var(--border); padding:7px 9px; text-align:left; vertical-align:top;}
+  th{background:#f0f4f7; font-weight:600;}
+  .en{font-size:18px; font-weight:600;}
+  .zh{color:var(--muted); margin-top:2px;}
+  .tip{font-size:13px; color:#8a6d1a; margin-top:6px; background:#fdf8ec; border-radius:8px; padding:6px 9px;}
+  .ipa{font-size:13px; color:var(--accent); background:var(--accent-soft); border-radius:8px; padding:6px 9px; margin:8px 0;}
+  .step{border-top:1px dashed var(--border); margin-top:10px; padding-top:10px;}
+  .step b{color:var(--accent);}
+  .cue{background:#f2f6f9; border-radius:10px; padding:10px 12px; margin:6px 0;}
+  .reveal{display:none; margin-top:8px;}
+  .reveal.show{display:block;}
+  audio{width:100%; margin-top:8px;}
+  select, input[type=range]{font-size:14px;}
+  .bar{display:flex; gap:8px; flex-wrap:wrap; margin:8px 0;}
+  .chip{
+    border:1px solid var(--border); background:var(--card); border-radius:999px;
+    padding:6px 12px; font-size:13px; cursor:pointer;
+  }
+  .chip.on{background:var(--accent-soft); border-color:var(--accent); color:var(--accent); font-weight:600;}
+  .turn{margin:10px 0;}
+  .turn .who{font-size:12px; color:var(--muted);}
+  .turn.me .bubble{background:var(--accent-soft);}
+  .bubble{background:#f0f4f7; border-radius:12px; padding:10px 12px; margin-top:4px;}
+  textarea{width:100%; min-height:150px; border:1px solid var(--border); border-radius:10px; padding:10px; font-size:13px; font-family:monospace;}
+  .foot{color:var(--muted); font-size:12px; margin-top:20px; text-align:center;}
+  @media (max-width:520px){ .en{font-size:17px;} body{font-size:15px;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🗣️ 日常英语碎片练</h1>
+    <p>先听 → 再跟读 → 后演练 ｜ 每天 12 分钟，积少成多</p>
+  </header>
+
+  <nav>
+    <button data-tab="today" class="on">📖 今日学习</button>
+    <button data-tab="dialog">🎭 情景演练</button>
+    <button data-tab="plan">🗓️ 计划总览</button>
+    <button data-tab="data">📥 导入 / 设置</button>
+  </nav>
+
+  <!-- ============ 今日学习 ============ -->
+  <section id="tab-today" class="on">
+    <div class="bar" id="weekChips"></div>
+    <div id="dayList"></div>
+  </section>
+
+  <!-- ============ 情景演练 ============ -->
+  <section id="tab-dialog">
+    <div class="card">
+      <h3>🎭 怎么演练</h3>
+      <p class="muted">App 语音演「对方」，你只看中文提示开口说英语，说完再对答案。就像真实场景的彩排。</p>
+    </div>
+    <div class="bar" id="dlgChips"></div>
+    <div class="card" id="dlgBox"></div>
+  </section>
+
+  <!-- ============ 计划总览 ============ -->
+  <section id="tab-plan">
+    <div class="card">
+      <h3>📅 三个月粗计划</h3>
+      <table id="planTable"></table>
+    </div>
+    <div id="weekOverview"></div>
+  </section>
+
+  <!-- ============ 导入 / 设置 ============ -->
+  <section id="tab-data">
+    <div class="card">
+      <h3>🔊 发音设置</h3>
+      <p class="muted">选一个你听着舒服的英文语音；语速建议先用 0.7，熟了再加快。</p>
+      <p style="margin-top:8px;">语音：<select id="voiceSel"></select></p>
+      <p style="margin-top:8px;">语速：<span id="rateVal">0.75</span>
+        <input type="range" id="rateRange" min="0.5" max="1.1" step="0.05" value="0.75" style="width:60%; vertical-align:middle;"></p>
+      <button class="btn ghost" id="testVoice">试听一句</button>
+    </div>
+    <div class="card">
+      <h3>🩺 环境自检</h3>
+      <p class="muted" id="diagInfo"></p>
+      <button class="btn ghost" id="testMic">🎤 测试麦克风</button>
+      <p class="muted" id="micMsg" style="margin-top:6px;">麦克风「用完即还」：每次录音结束自动释放，不常驻占用，其他软件随时可用。部署到 HTTPS 网站后，浏览器会记住本站授权——只在第一次使用时弹一次窗，之后录音全程静默。</p>
+    </div>
+    <div class="card">
+      <h3>📥 导入学习计划（JSON）</h3>
+      <p class="muted">把 Lily 老师生成的第 2、3 个月 JSON 粘贴到这里，点导入即可替换内容（学习进度会保留）。</p>
+      <textarea id="importArea" placeholder='格式示例：{"weeks":[{"id":"w5","title":"第 5 周 · 酒店入住","ipa":"check-in /ˈtʃekɪn/ · ...","days":[{"en":"I have a reservation under Luo.","zh":"我用罗的名字订了房。","tip":"reservation 是预订"}],"dialog":[{"who":"opponent","en":"Good evening. Do you have a reservation?","zh":"晚上好，您有预订吗？"},{"who":"me","en":"Yes, under Luo.","cue":"有，姓罗。"}]}]}'></textarea>
+      <div style="margin-top:8px;">
+        <button class="btn" id="doImport">导入</button>
+        <button class="btn ghost" id="fillTemplate">填入格式模板</button>
+        <button class="btn ghost" id="doExport">导出当前内容</button>
+        <button class="btn ghost" id="resetProg">清零学习进度</button>
+      </div>
+      <p class="muted" id="importMsg" style="margin-top:8px;"></p>
+    </div>
+  </section>
+
+  <p class="foot">纯本地运行 · 数据保存在本机浏览器 · Lily 老师陪你练 💪</p>
+</div>
+
+<script>
+/* ================= 计划数据（默认内置） ================= */
+var DEFAULT_DATA = {
+  months: [
+    {m:"第 1 个月", theme:"日常交际基础", scenes:"寒暄破冰 · 餐厅饮食 · 购物 · 交通问路", goal:"敢开口、能接话，日常场面跑通闭环"},
+    {m:"第 2 个月", theme:"出国旅游全场景", scenes:"机场出入境 · 酒店入住退房 · 打车乘车 · 景点求助", goal:"出国一整趟不靠翻译软件也能办事"},
+    {m:"第 3 个月", theme:"进阶交际与应变", scenes:"电话预约 · 就医药房基础 · 闲聊深化 · 综合实战", goal:"从「能办事」到「聊得动」，意外不慌"}
+  ],
+  weeks: [
+    { id:"w1", title:"第 1 周 · 寒暄破冰",
+      ipa:"meet /miːt/ · again /əˈɡen/ · beautiful /ˈbjuːtɪfl/ · call /kɔːl/ · been /biːn/ · talking /ˈtɔːkɪŋ/",
+      days:[
+        {en:"Nice to meet you!", zh:"很高兴认识你！", tip:"初次见面用 meet；老熟人再用 Nice to see you (again)。"},
+        {en:"Where are you from?", zh:"你来自哪里？", tip:"问完接一句 Oh cool, I've heard it's beautiful. 聊天就不尬。"},
+        {en:"My name is Luo. You can call me Jun.", zh:"我姓罗，叫我 Jun 就行。", tip:"自我介绍用 I'm / My name is，别用生硬的 I am called。"},
+        {en:"How long have you been in China?", zh:"你来中国多久了？", tip:"现在完成时 have been；年龄、收入、婚姻别问，属隐私。"},
+        {en:"It was nice talking to you. See you!", zh:"聊得很开心，再见！", tip:"自然收尾语，比 Goodbye 更常用。"}
+      ],
+      dialog:[
+        {who:"opponent", en:"Hello! Nice to meet you!", zh:"你好，很高兴认识你！"},
+        {who:"me", en:"Nice to meet you too!", cue:"很高兴认识你（too 表示「也」）"},
+        {who:"opponent", en:"I'm Tom, from the US.", zh:"我叫 Tom，从美国来。"},
+        {who:"me", en:"Welcome to Chengdu! My name is Luo. You can call me Jun.", cue:"欢迎来成都！我姓罗，叫我 Jun 就行。"},
+        {who:"opponent", en:"Nice! The food here is amazing.", zh:"太好了，这儿的吃的太棒了。"},
+        {who:"me", en:"It was nice talking to you. See you!", cue:"聊得很开心，再见！（收尾告别）"}
+      ]},
+    { id:"w2", title:"第 2 周 · 餐厅饮食",
+      ipa:"menu /ˈmenjuː/ · recommend /ˌrekəˈmend/ · spicy /ˈspaɪsi/ · bottle /ˈbɒtl/ · bill /bɪl/ · check /tʃek/",
+      days:[
+        {en:"Could I see the menu, please?", zh:"请给我看下菜单。", tip:"Could I 比 Can I 更礼貌。"},
+        {en:"What do you recommend?", zh:"你推荐什么？", tip:"recommend 是动词，别造出 suggest to eat 这类中式句。"},
+        {en:"Not spicy, please. I can't eat spicy food.", zh:"不要辣，我吃不了辣。", tip:"「不要辣」是 not spicy，别直译成 no chili。"},
+        {en:"Could we have another bottle of water?", zh:"再来一瓶水。", tip:"一瓶 a bottle；两瓶要说 two bottles（复数）。"},
+        {en:"Could we get the bill, please?", zh:"买单。", tip:"国外说 bill 或 check；「AA」是 split the bill。"}
+      ],
+      dialog:[
+        {who:"opponent", en:"Good evening. Are you ready to order?", zh:"晚上好，可以点菜了吗？"},
+        {who:"me", en:"Could I see the menu, please?", cue:"请给我看下菜单。"},
+        {who:"opponent", en:"Sure, here you are.", zh:"当然，给您。"},
+        {who:"me", en:"What do you recommend?", cue:"你推荐什么？"},
+        {who:"opponent", en:"The fish is very good today.", zh:"今天的鱼很不错。"},
+        {who:"me", en:"OK, I'll take it. Not spicy, please.", cue:"好的，就要它。不要辣。"},
+        {who:"opponent", en:"Anything to drink?", zh:"要喝的吗？"},
+        {who:"me", en:"A bottle of water, please.", cue:"请给我一瓶水。"},
+        {who:"opponent", en:"Great. Enjoy your meal!", zh:"好的，请慢用！"},
+        {who:"me", en:"Thanks! ... Could we get the bill, please?", cue:"谢谢！……（吃完后）买单。"}
+      ]},
+    { id:"w3", title:"第 3 周 · 购物",
+      ipa:"excuse /ɪkˈskjuːs/ · find /faɪnd/ · larger /ˈlɑːdʒə/ · size /saɪz/ · receipt /rɪˈsiːt/ · return /rɪˈtɜːn/",
+      days:[
+        {en:"Excuse me, where can I find the milk?", zh:"请问牛奶在哪？", tip:"开口先 Excuse me，这是英语世界的敲门砖。"},
+        {en:"How much is this?", zh:"这个多少钱？", tip:"单个用 is；买多个问 How much are these?"},
+        {en:"Do you have this in a larger size?", zh:"有大一号的吗？", tip:"larger size，没有 more big 这个说法。"},
+        {en:"Can I try it on?", zh:"我能试穿吗？", tip:"试穿衣服固定说 try it on。"},
+        {en:"I'd like to return this. Here's the receipt.", zh:"我想退这个，这是小票。", tip:"receipt 读 /rɪˈsiːt/，p 不发音。"}
+      ],
+      dialog:[
+        {who:"opponent", en:"Can I help you?", zh:"需要帮忙吗？"},
+        {who:"me", en:"Yes, do you have this in a larger size?", cue:"是的，这个有大一号的吗？"},
+        {who:"opponent", en:"Here you are.", zh:"给您。"},
+        {who:"me", en:"Thanks. Can I try it on?", cue:"谢谢，我能试穿吗？"},
+        {who:"opponent", en:"Of course. How is it?", zh:"当然可以。怎么样？"},
+        {who:"me", en:"It's a bit small. How much is this one?", cue:"有点小。这个多少钱？"},
+        {who:"opponent", en:"Two hundred yuan.", zh:"两百元。"},
+        {who:"me", en:"OK, I'll take it. Thank you!", cue:"好的，我买了。谢谢！"}
+      ]},
+    { id:"w4", title:"第 4 周 · 交通与问路",
+      ipa:"address /əˈdres/ · nearest /ˈnɪərɪst/ · station /ˈsteɪʃn/ · airport /ˈeəpɔːt/ · distance /ˈdɪstəns/ · crossing /ˈkrɒsɪŋ/",
+      days:[
+        {en:"Could you take me to this address, please?", zh:"请送我去这个地址。", tip:"打车把地址存在手机上给司机看，最保险。"},
+        {en:"Where is the nearest subway station?", zh:"最近的地铁站在哪？", tip:"nearest（不是 most near）。"},
+        {en:"Excuse me, how do I get to the airport?", zh:"请问机场怎么走？", tip:"how do I get to，别造 how can I arrive。"},
+        {en:"Is it within walking distance?", zh:"走路能到吗？", tip:"walking distance 是固定说法。"},
+        {en:"Turn left at the second crossing, it's on your right.", zh:"第二个路口左转，右手边就是。", tip:"给外国朋友指路的万能句；left / right 别混。"}
+      ],
+      dialog:[
+        {who:"me", en:"Excuse me, how do I get to the airport?", cue:"请问，机场怎么走？"},
+        {who:"opponent", en:"You can take the subway. It's faster.", zh:"你可以坐地铁，更快。"},
+        {who:"me", en:"Where is the nearest subway station?", cue:"最近的地铁站在哪？"},
+        {who:"opponent", en:"Go straight, then turn left at the second crossing.", zh:"直走，然后在第二个路口左转。"},
+        {who:"me", en:"Is it within walking distance?", cue:"走路能到吗？"},
+        {who:"opponent", en:"Yes, about five minutes.", zh:"能，大概五分钟。"},
+        {who:"me", en:"Great, thank you very much!", cue:"太好了，非常感谢！"}
+      ]}
+  ]
+};
+
+/* ================= 状态与存储 ================= */
+function lsGet(k,d){ try{ var s=localStorage.getItem(k); return s?JSON.parse(s):d; }catch(e){ return d; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+var DATA = lsGet("et_data", null) || DEFAULT_DATA;
+var PROG = lsGet("et_prog", {});
+var CFG  = lsGet("et_cfg", {rate:0.75, voice:""});
+
+/* ================= TTS ================= */
+var voices = [];
+function loadVoices(){
+  if(!window.speechSynthesis) return;
+  voices = speechSynthesis.getVoices().filter(function(v){ return /^en/i.test(v.lang); });
+  var sel = document.getElementById("voiceSel");
+  sel.innerHTML = "";
+  voices.forEach(function(v,i){
+    var o=document.createElement("option"); o.value=i; o.textContent=v.name+" ("+v.lang+")"; sel.appendChild(o);
+  });
+  var idx = voices.findIndex(function(v){ return v.name===CFG.voice; });
+  sel.value = idx>=0 ? idx : 0;
+}
+if(window.speechSynthesis){ loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
+
+function speak(text, rate){
+  if(!window.speechSynthesis){ alert("当前浏览器不支持语音播放，建议用 Chrome 或 Edge 打开"); return; }
+  speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = "en-US";
+  var v = voices[document.getElementById("voiceSel").value];
+  if(v){ u.voice = v; }
+  u.rate = rate || CFG.rate;
+  speechSynthesis.speak(u);
+}
+
+/* ================= 录音（跟读对比） ================= */
+var rec=null, recChunks=[], micStream=null;
+function ensureMic(){
+  return new Promise(function(resolve,reject){
+    if(micStream && micStream.active){ resolve(micStream); return; }
+    navigator.mediaDevices.getUserMedia({audio:true}).then(function(s){
+      micStream=s; resolve(s);
+    }).catch(reject);
+  });
+}
+function releaseMic(){
+  if(micStream){ micStream.getTracks().forEach(function(t){ t.stop(); }); micStream=null; }
+}
+function micErrorText(err){
+  var n = err && err.name ? err.name : "UnknownError";
+  if(n==="NotAllowedError" || n==="SecurityError"){
+    return "❌ 麦克风被拦截（"+n+"）。常见原因：① 页面在预览面板/iframe 里打开会被直接拦截——请把本文件下载到电脑，用 Chrome/Edge 直接双击打开；② 地址栏左侧麦克风图标选「允许」后刷新重试。";
+  }
+  if(n==="NotFoundError") return "❌ 没检测到麦克风设备（"+n+"），请检查电脑是否插入/启用了麦克风。";
+  if(n==="NotReadableError") return "❌ 麦克风被其他程序占用（"+n+"），关掉占用麦克风的软件（如会议/录音软件）再试。";
+  return "❌ 录音失败：" + n + (err && err.message ? "（"+err.message+"）" : "");
+}
+function toggleRecord(btn, audioBox){
+  if(rec && rec.state==="recording"){ rec.stop(); return; }
+  if(!navigator.mediaDevices || !window.MediaRecorder){
+    audioBox.innerHTML = '<p class="muted">当前环境不支持录音（window.isSecureContext='+window.isSecureContext+'，MediaRecorder='+(!!window.MediaRecorder)+'）。请用 Chrome/Edge 直接打开本文件。</p>'; return;
+  }
+  ensureMic().then(function(stream){
+    recChunks = [];
+    rec = new MediaRecorder(stream);
+    rec.ondataavailable = function(e){ if(e.data && e.data.size>0) recChunks.push(e.data); };
+    rec.onerror = function(e){ audioBox.innerHTML = '<p class="muted">❌ 录音出错：'+(e.error&&e.error.name?e.error.name:"unknown")+'</p>'; };
+    rec.onstop = function(){
+      releaseMic(); /* 用完即还：录完立即释放麦克风，不常驻占用；HTTPS 下权限已记住，下次获取静默无感 */
+      if(!recChunks.length){
+        audioBox.innerHTML = '<p class="muted">❌ 没录到任何音频数据，请重试；若反复出现请点「📥 导入 / 设置」里的「环境自检」。</p>';
+        btn.textContent = "🎙️ 录我的跟读";
+        return;
+      }
+      var type = rec.mimeType || "audio/webm";
+      var blob = new Blob(recChunks, {type:type});
+      var url = URL.createObjectURL(blob);
+      audioBox.innerHTML = '<p class="muted" style="margin-top:6px;">🎧 你的跟读录音（点播放，和上面原声对比）：'+type+'</p>';
+      var a = document.createElement("audio"); a.controls = true; a.src = url;
+      audioBox.appendChild(a);
+      btn.textContent = "🎙️ 重新录一遍";
+    };
+    rec.start();
+    btn.textContent = "⏹️ 停止录音";
+  }).catch(function(err){
+    audioBox.innerHTML = '<p class="muted">'+micErrorText(err)+'</p>';
+  });
+}
+
+/* ================= 标签页切换 ================= */
+var tabs = document.querySelectorAll("nav button");
+tabs.forEach(function(b){
+  b.onclick = function(){
+    tabs.forEach(function(x){ x.classList.remove("on"); });
+    b.classList.add("on");
+    document.querySelectorAll("section").forEach(function(s){ s.classList.remove("on"); });
+    document.getElementById("tab-"+b.dataset.tab).classList.add("on");
+  };
+});
+
+/* ================= 今日学习 ================= */
+var dayNames = ["周一","周二","周三","周四","周五"];
+var curWeek = 0;
+function renderWeekChips(){
+  var box = document.getElementById("weekChips"); box.innerHTML="";
+  DATA.weeks.forEach(function(w,i){
+    var b=document.createElement("button"); b.className="chip"+(i===curWeek?" on":"");
+    b.textContent=w.title.split("·")[0].trim();
+    b.onclick=function(){ curWeek=i; renderWeekChips(); renderDays(); };
+    box.appendChild(b);
+  });
+}
+function doneKey(wid,i){ return wid+"-"+i; }
+function renderDays(){
+  var w = DATA.weeks[curWeek];
+  var box = document.getElementById("dayList"); box.innerHTML="";
+  var head=document.createElement("div"); head.className="card";
+  head.innerHTML = "<h3>"+w.title+"</h3>"+
+    '<div class="ipa">🔊 生词音标：'+w.ipa+"</div>"+
+    '<p class="muted">顺序别反：没听熟不硬读，没读顺不演练。</p>';
+  box.appendChild(head);
+
+  w.days.forEach(function(d,i){
+    var key = doneKey(w.id,i);
+    var c=document.createElement("div"); c.className="card";
+    c.innerHTML =
+      '<h3>'+dayNames[i]+' · '+d.en+'</h3>'+
+      '<div class="zh">'+d.zh+'</div>'+
+      '<div class="tip">💡 '+d.tip+'</div>'+
+      '<div class="step"><b>第 1 步 · 先听</b> '+
+        '<button class="btn" data-act="play" data-i="'+i+'">▶️ 播放</button>'+
+        '<button class="btn ghost" data-act="slow" data-i="'+i+'">🐢 慢速</button></div>'+
+      '<div class="step"><b>第 2 步 · 再跟读</b> '+
+        '<button class="btn ghost" data-act="again" data-i="'+i+'">🔁 再听一遍</button> '+
+        '<button class="btn ghost" data-act="rec" data-i="'+i+'">🎙️ 录我的跟读</button>'+
+        '<div class="recbox" data-rec="'+i+'"></div></div>'+
+      '<div class="step"><b>第 3 步 · 后演练</b>'+
+        '<div class="cue">🇨🇳 中文提示：<b>'+d.zh+'</b>（先别看英文，自己说一遍）</div>'+
+        '<button class="btn ghost" data-act="reveal" data-i="'+i+'">👀 揭晓英文</button>'+
+        '<div class="reveal" data-rev="'+i+'"><div class="en">'+d.en+'</div></div></div>'+
+      '<div class="step" style="text-align:right;">'+
+        '<button class="btn '+(PROG[key]?"done":"ghost")+'" data-act="done" data-i="'+i+'">'+
+        (PROG[key]?"✅ 已掌握":"○ 标记为已掌握")+"</button></div>";
+    box.appendChild(c);
+  });
+
+  box.querySelectorAll("button[data-act]").forEach(function(b){
+    b.onclick = function(){
+      var i = +b.dataset.i, d = DATA.weeks[curWeek].days[i];
+      var act = b.dataset.act;
+      if(act==="play") speak(d.en, CFG.rate);
+      if(act==="slow") speak(d.en, 0.6);
+      if(act==="again") speak(d.en, CFG.rate);
+      if(act==="rec") toggleRecord(b, box.querySelector('[data-rec="'+i+'"]'));
+      if(act==="reveal") box.querySelector('[data-rev="'+i+'"]').classList.add("show");
+      if(act==="done"){
+        var key = doneKey(DATA.weeks[curWeek].id, i);
+        PROG[key] = !PROG[key]; lsSet("et_prog", PROG); renderDays();
+      }
+    };
+  });
+}
+
+/* ================= 情景演练 ================= */
+var dlgWeek = 0, dlgTurn = 0;
+function renderDlgChips(){
+  var box=document.getElementById("dlgChips"); box.innerHTML="";
+  DATA.weeks.forEach(function(w,i){
+    var b=document.createElement("button"); b.className="chip"+(i===dlgWeek?" on":"");
+    b.textContent=w.title.split("·")[1].trim();
+    b.onclick=function(){ dlgWeek=i; dlgTurn=0; renderDlgChips(); renderDlg(); };
+    box.appendChild(b);
+  });
+}
+function renderDlg(){
+  var w=DATA.weeks[dlgWeek], box=document.getElementById("dlgBox");
+  if(dlgTurn>=w.dialog.length){
+    box.innerHTML="<h3>🎉 演练完成！</h3><p class='muted'>整套对话走完了。再来一遍挑战不看提示，或换个场景继续。</p>"+
+      '<button class="btn" id="dlgRestart">🔄 再来一遍</button>';
+    document.getElementById("dlgRestart").onclick=function(){ dlgTurn=0; renderDlg(); };
+    return;
+  }
+  var t=w.dialog[dlgTurn], me = t.who==="me";
+  box.innerHTML =
+    "<h3>"+w.title.split("·")[1].trim()+' <span class="muted">（第 '+(dlgTurn+1)+" / "+w.dialog.length+" 句）</span></h3>"+
+    '<div class="turn'+(me?" me":"")+'">'+
+      '<div class="who">'+(me?"🙋 你说（看中文提示开口）":"🗣️ 对方说")+"</div>"+
+      '<div class="bubble">'+
+        (me ? ('<div class="zh" style="font-size:16px;"><b>'+t.cue+"</b></div>")
+            : ('<div class="en">'+t.en+'</div><div class="zh">'+t.zh+"</div>"))+
+      "</div></div>"+
+    (me ? '<button class="btn ghost" id="dlgReveal">👀 对答案</button><div class="reveal" id="dlgRev"><div class="en">'+t.en+"</div></div>"
+        : '<button class="btn" id="dlgPlay">▶️ 播放对方台词</button>')+
+    '<div style="margin-top:10px;"><button class="btn" id="dlgNext">下一句 →</button></div>';
+
+  var rp=document.getElementById("dlgPlay"); if(rp) rp.onclick=function(){ speak(t.en, CFG.rate); };
+  var rv=document.getElementById("dlgReveal"); if(rv) rv.onclick=function(){
+    document.getElementById("dlgRev").classList.add("show"); speak(t.en, CFG.rate);
+  };
+  document.getElementById("dlgNext").onclick=function(){ dlgTurn++; renderDlg(); };
+  if(!me) speak(t.en, CFG.rate);
+}
+
+/* ================= 计划总览 ================= */
+function renderPlan(){
+  var tb=document.getElementById("planTable");
+  tb.innerHTML="<tr><th>月份</th><th>主题</th><th>覆盖场景</th><th>目标</th></tr>"+
+    DATA.months.map(function(m){ return "<tr><td><b>"+m.m+"</b></td><td>"+m.theme+"</td><td>"+m.scenes+"</td><td>"+m.goal+"</td></tr>"; }).join("");
+  document.getElementById("weekOverview").innerHTML = DATA.weeks.map(function(w){
+    return '<div class="card"><h3>'+w.title+'</h3><div class="ipa">🔊 '+w.ipa+"</div><table>"+
+      "<tr><th>英文</th><th>中文</th><th>易错点</th></tr>"+
+      w.days.map(function(d){ return "<tr><td>"+d.en+"</td><td>"+d.zh+"</td><td>"+d.tip+"</td></tr>"; }).join("")+
+      "</table></div>";
+  }).join("");
+}
+
+/* ================= 导入 / 设置 ================= */
+document.getElementById("fillTemplate").onclick=function(){
+  document.getElementById("importArea").value =
+    '{"weeks":[{"id":"w5","title":"第 5 周 · 酒店入住","ipa":"reservation /ˌrezəˈveɪʃn/ · ...","days":[{"en":"I have a reservation under Luo.","zh":"我用罗的名字订了房。","tip":"reservation 是预订"}],"dialog":[{"who":"opponent","en":"Good evening. Do you have a reservation?","zh":"晚上好，您有预订吗？"},{"who":"me","en":"Yes, under Luo.","cue":"有，姓罗。"}]}]}';
+};
+document.getElementById("doImport").onclick=function(){
+  var msg=document.getElementById("importMsg");
+  try{
+    var obj=JSON.parse(document.getElementById("importArea").value);
+    if(!obj.weeks || !obj.weeks.length) throw new Error("缺少 weeks 数组");
+    if(obj.months) DATA.months=obj.months;
+    DATA.weeks=obj.weeks; lsSet("et_data", DATA);
+    curWeek=0; dlgWeek=0; dlgTurn=0;
+    renderWeekChips(); renderDays(); renderDlgChips(); renderDlg(); renderPlan();
+    msg.textContent="✅ 导入成功，共 "+obj.weeks.length+" 周。"; msg.style.color="var(--ok)";
+  }catch(e){
+    msg.textContent="❌ 导入失败："+e.message; msg.style.color="#c0392b";
+  }
+};
+document.getElementById("doExport").onclick=function(){
+  var blob=new Blob([JSON.stringify(DATA,null,2)],{type:"application/json"});
+  var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="english-plan.json"; a.click();
+};
+document.getElementById("resetProg").onclick=function(){
+  if(confirm("确定把所有「已掌握」标记清零吗？")){ PROG={}; lsSet("et_prog",PROG); renderDays(); }
+};
+document.getElementById("rateRange").oninput=function(){
+  CFG.rate=+this.value; document.getElementById("rateVal").textContent=this.value; lsSet("et_cfg",CFG);
+};
+document.getElementById("voiceSel").onchange=function(){
+  if(voices[this.value]) CFG.voice=voices[this.value].name; lsSet("et_cfg",CFG);
+};
+document.getElementById("testVoice").onclick=function(){ speak("Nice to meet you! Let's practice English every day."); };
+(function(){
+  var info=document.getElementById("diagInfo");
+  var secure = window.isSecureContext ? "是" : "否";
+  var iframe = (function(){ try{ return window.self!==window.top ? "在 iframe 里（预览面板）" : "独立窗口"; }catch(e){ return "在 iframe 里（预览面板）"; } })();
+  info.textContent = "安全上下文："+secure+" ｜ 打开方式："+iframe+
+    " ｜ 语音播放："+(window.speechSynthesis?"支持":"不支持")+
+    " ｜ 录音 API："+(window.MediaRecorder?"支持":"不支持")+
+    " ｜ 当前协议："+location.protocol;
+})();
+document.getElementById("testMic").onclick=function(){
+  var msg=document.getElementById("micMsg");
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    msg.textContent="❌ 当前浏览器没有暴露 getUserMedia，请用 Chrome/Edge 直接打开本文件（不要在预览面板里用）";
+    return;
+  }
+  msg.textContent="⏳ 正在请求麦克风…（若弹窗请点「允许」）";
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+    stream.getTracks().forEach(function(t){ t.stop(); });
+    msg.textContent="✅ 麦克风正常，可以录音跟读了";
+  }).catch(function(err){ msg.textContent=micErrorText(err); });
+};
+document.getElementById("rateRange").value=CFG.rate;
+document.getElementById("rateVal").textContent=CFG.rate;
+
+/* ================= 启动 ================= */
+renderWeekChips(); renderDays(); renderDlgChips(); renderDlg(); renderPlan();
+</script>
+</body>
+</html>
